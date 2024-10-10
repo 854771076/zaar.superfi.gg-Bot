@@ -67,8 +67,9 @@ class SuoerFiBotManager:
         
     def run(self,wallet,token):
         cls=SuoerFiBot(wallet=wallet,proxies=self.proxies,Twitter_Token=token['Twitter_Token'],Discord_Token=token['Discord_Token'])
+        points=cls.run()
         with self.lock:
-            wallet['points']=cls.run()        
+            wallet['points']= points          
     def run_all(self,max_workers=10):
         with ThreadPoolExecutor(max_workers=max_workers) as executor:
             futures = [executor.submit(self.run, wallet,self.tokens[index]) for index,wallet in enumerate(self.wallets)]
