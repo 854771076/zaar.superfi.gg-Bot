@@ -69,7 +69,7 @@ class SuoerFiBotManager:
         cls=SuoerFiBot(wallet=wallet,proxies=self.proxies,Twitter_Token=token['Twitter_Token'],Discord_Token=token['Discord_Token'])
         with self.lock:
             wallet['points']=cls.run()        
-    def run_all(self,max_workers=1):
+    def run_all(self,max_workers=10):
         with ThreadPoolExecutor(max_workers=max_workers) as executor:
             futures = [executor.submit(self.run, wallet,self.tokens[index]) for index,wallet in enumerate(self.wallets)]
             for future in as_completed(futures):
@@ -185,7 +185,7 @@ class SuoerFiBot:
             self.Discord=Discord_Sync(self.Discord_Token,proxies=self.proxies)
             self.Twitter=Twitter_Sync(self.Twitter_Token,proxies=self.proxies)
         except Exception as e:
-            logger.error(f'初始化社交账户失败：{e},token:{token}')
+            logger.warning(f'{self.address=}初始化社交账户失败：{e},重试中...')
             self._init_account()
     def _init_js(self):
         js_list=glob.glob(os.path.join(current_script_directory,'js','*'))
