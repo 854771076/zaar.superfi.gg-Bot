@@ -2,6 +2,6 @@ curl_cffi
 loguru
 fake_useragent
 
-execjs
+pyexecjs
 python-dotenv
 requests[socks]
