@@ -1,0 +1,10 @@
+{
+  "dependencies": {
+    "@unisat/wallet-sdk": "^1.7.3",
+    "bip32": "^4.0.0",
+    "crypto-js": "^4.2.0",
+    "jsdom": "^25.0.1",
+    "patch-package": "^8.0.0",
+    "yarn": "*"
+  }
+}

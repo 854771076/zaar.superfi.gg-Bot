@@ -1,0 +1,7 @@
+curl_cffi
+loguru
+fake_useragent
+subprocess
+execjs
+python-dotenv
+requests[socks]
