@@ -192,6 +192,7 @@ class SuoerFiBot:
         except Exception as e:
             logger.warning(f'{self.address=}初始化社交账户失败：{e},重试中...')
             self._init_account()
+            time.sleep(10)
     def _init_js(self):
         js_list=glob.glob(os.path.join(current_script_directory,'js','*'))
         self.js_mapping={}
