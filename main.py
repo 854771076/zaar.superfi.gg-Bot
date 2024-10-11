@@ -26,6 +26,7 @@ load_dotenv()
 PROXIES_TYPE=os.getenv('PROXIES_TYPE')
 USE_PROXIES=os.getenv('USE_PROXIES')
 PROXIES = {
+    "socks5":f"{PROXIES_TYPE}://%(user)s:%(pwd)s@%(proxy)s/" % {"user": os.getenv('PROXIES_USERNAME'), "pwd": os.getenv('PROXIES_PASSWORD'), "proxy": os.getenv('PROXIES_TUNNEL')},
     "http": f"{PROXIES_TYPE}://%(user)s:%(pwd)s@%(proxy)s/" % {"user": os.getenv('PROXIES_USERNAME'), "pwd": os.getenv('PROXIES_PASSWORD'), "proxy": os.getenv('PROXIES_TUNNEL')},
     "https": f"{PROXIES_TYPE}://%(user)s:%(pwd)s@%(proxy)s/" % {"user": os.getenv('PROXIES_USERNAME'), "pwd": os.getenv('PROXIES_PASSWORD'), "proxy": os.getenv('PROXIES_TUNNEL')}
 }
@@ -85,16 +86,19 @@ class SuoerFiBotManager:
             print_str+=f'{wallet.get("address"):<75}\t{wallet.get("points","未初始化"):<10}\n'
         logger.success(print_str)
     def create_wallet_by_num(self,num=1,max_workers=10):
-        with ThreadPoolExecutor(max_workers=max_workers) as executor:
-            futures = [executor.submit(self._create_wallet) for i in range(num)]
-            for future in as_completed(futures):
-                try:
-                    data = future.result()
-                except Exception as e:
-                    logger.error(f"创建钱包失败: {e}")
-                    return
-            logger.success(f"创建钱包成功-数量：{num}")  
-        self._save(type='wallets')
+        try:
+            with ThreadPoolExecutor(max_workers=max_workers) as executor:
+                futures = [executor.submit(self._create_wallet) for i in range(num)]
+                for future in as_completed(futures):
+                    try:
+                        data = future.result()
+                    except Exception as e:
+                        logger.error(f"创建钱包失败: {e}")
+                        return
+                logger.success(f"创建钱包成功-数量：{num}") 
+                self._save(type='wallets') 
+        except:
+            self._save(type='wallets')
     def menu(self):
         print("*"*10+'SuperFiBot'+"*"*10) 
         print(f'{"1.创建钱包":^20}') 
