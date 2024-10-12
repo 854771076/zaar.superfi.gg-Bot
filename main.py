@@ -72,14 +72,19 @@ class SuoerFiBotManager:
         with self.lock:
             wallet['points']= points          
     def run_all(self,max_workers=10):
-        with ThreadPoolExecutor(max_workers=max_workers) as executor:
-            futures = [executor.submit(self.run, wallet,self.tokens[index]) for index,wallet in enumerate(self.wallets)]
-            for future in as_completed(futures):
-                try:
-                    data = future.result()
-                except Exception as e:
-                    logger.error(f"初始化钱包失败: {e}")    
-        self._save(type='wallets')
+        try:
+            with ThreadPoolExecutor(max_workers=max_workers) as executor:
+                    futures = [executor.submit(self.run, wallet,self.tokens[index]) for index,wallet in enumerate(self.wallets)]
+                    for future in as_completed(futures):
+                        try:
+                            data = future.result()
+                        except Exception as e:
+                            logger.error(f"初始化钱包失败: {e}")  
+                        finally:
+                            self._save(type='wallets') 
+            self._save(type='wallets')
+        except:
+            self._save(type='wallets')
     def show_points(self):
         print_str=f'\n{"钱包地址":<75}\t{"积分":<10}\n'
         for wallet in self.wallets:
